@@ -1,0 +1,1 @@
+# laravel-testbench-issue-402
