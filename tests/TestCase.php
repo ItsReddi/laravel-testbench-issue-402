@@ -21,7 +21,7 @@ class TestCase extends OrchestraTestCase
     protected function defineEnvironment($app)
     {
         // Set up default config, environment variables, are loaded from /tests/.env
-        //$app['config']->set('cache.default', 'file');
+        $app['config']->set('cache.default', 'file');
     }
 
     protected function getPackageProviders($app)
