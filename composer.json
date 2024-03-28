@@ -1,0 +1,60 @@
+{
+    "name": "itsreddi/laravel-testbench-issue-402",
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0",
+        "illuminate/auth": "^11.0",
+        "illuminate/validation": "^11.0",
+        "illuminate/translation": "^11.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "vlucas/phpdotenv": "^5.3",
+        "symplify/easy-coding-standard": "12.1.14",
+        "rector/rector": "^1.0",
+        "nunomaduro/collision": "^8.1",
+        "orchestra/testbench": "^9.0"
+    },
+    "type": "package",
+    "description": "laravel-testbench-issue-402",
+    "keywords": [
+        "package",
+        "laravel"
+    ],
+    "autoload": {
+        "psr-4": {
+            "issue\\ext\\testbench\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "issue\\ext\\testbench\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ],
+        "test": [
+            "@php vendor/bin/testbench package:test"
+        ],
+        "test-coverage": [
+            "@php vendor/bin/testbench package:test --coverage --min=90 --compact"
+        ],
+        "test-profile": [
+            "@php vendor/bin/testbench package:test --compact --profile"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "local-dev"
+        },
+        "laravel": {
+            "providers": [
+                
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

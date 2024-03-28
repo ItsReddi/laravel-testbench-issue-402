@@ -1,0 +1,83 @@
+name: Code Quality Jobs (Tests, ecs, rector)
+on:
+    pull_request: 
+      types: [opened, synchronize, reopened]
+jobs:
+    rector_and_ecs:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+          if: ${{ github.actor != 'dependabot[bot]' }}
+          with:
+            ref: ${{ github.head_ref }}
+        - uses: actions/checkout@v4
+          if: ${{ github.actor == 'dependabot[bot]' }}
+          with:
+            ref: ${{ github.head_ref }}
+        - uses: shivammathur/setup-php@v2
+          name: setup php
+          with:
+            php-version: '8.2'
+            coverage: none
+            tools: composer:v2
+        - name: Install dependencies
+              shell: bash
+              working-directory: ./
+              run: composer update --no-progress --no-suggest --no-interaction --prefer-dist --dev
+        - name: Reset git changes (if any)
+          # needed because of remove local repositories
+          run: git reset --hard  
+        - name: Run rector
+          run: vendor/bin/rector process --ansi
+        - name: Run ECS
+          run: vendor/bin/ecs check --fix --ansi
+    run-tests:
+        needs: [rector_and_ecs]
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: true
+            matrix: 
+              php_version: [8.2, 8.3]
+              experimental_php: [false]
+              package: [laravel-testbench-issue-402]
+              include:
+                - package: laravel-testbench-issue-402
+                  test_cmd: composer test-coverage
+                - php_version: 8.4
+                  experimental_php: true
+                  package: laravel-testbench-issue-402
+                  test_cmd: composer test-coverage
+        name: ${{ matrix.php_version }}-${{ matrix.package }}
+        continue-on-error: ${{ matrix.experimental_php }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                ref: ${{ github.head_ref }}
+            - uses: shivammathur/setup-php@v2
+              with:
+                php-version: ${{ matrix.php_version }}
+                coverage: pcov
+                tools: composer:v2
+            - name: Install dependencies
+              shell: bash
+              working-directory: ./
+              run: composer install --prefer-dist
+            - name: Run tests
+              run: |
+                if [ -f "phpunit.xml" ]; then
+                    ${{ matrix.test_cmd }}
+                else
+                    exit 1;
+                fi
+            - name: Mark job as experimental
+              if: failure() && matrix.experimental_php
+              run: echo "This is an experimental job and failure is acceptable."
+
+    tests_completed:
+        runs-on: self-hosted
+        needs: [run-tests]
+        steps:
+          - name: Tests completed
+            id: tests_completed
+            run: |
+              echo "Tests completed"
