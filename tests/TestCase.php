@@ -2,6 +2,7 @@
 
 namespace issue\ext\testbench\Tests;
 
+use issue\ext\testbench\Providers\SomeServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
@@ -20,12 +21,11 @@ class TestCase extends OrchestraTestCase
 
     protected function defineEnvironment($app)
     {
-        // Set up default config, environment variables, are loaded from /tests/.env
         $app['config']->set('cache.default', 'file');
     }
 
     protected function getPackageProviders($app)
     {
-        return [];
+        return [SomeServiceProvider::class];
     }
 }
