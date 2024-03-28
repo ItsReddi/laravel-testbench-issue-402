@@ -6,6 +6,8 @@ use Illuminate\Auth\GenericUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Model;
+use UnexpectedValueException;
 
 class SomeProvider implements UserProvider
 {
@@ -32,6 +34,16 @@ class SomeProvider implements UserProvider
     public function retrieveByCredentials(array $credentials)
     {
         $value = Cache::remember('cacheKey', 300, fn () => 'value');
+
+        $class = '\\' . ltrim($this->authenticatable, '\\');
+        $model = new $class([]);
+        if (! $model instanceof Authenticatable) {
+            throw new UnexpectedValueException("User model must implement Illuminate\Contracts\Auth\Authenticatable");
+        }
+        if ($model instanceof Model) {
+            $model->setRawAttributes([]);
+        }
+
         return null;
     }
 
