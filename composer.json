@@ -51,7 +51,7 @@
         },
         "laravel": {
             "providers": [
-                
+                "issue\\ext\\testbench\\Providers\\SomeServiceProvider"
             ]
         }
     },
