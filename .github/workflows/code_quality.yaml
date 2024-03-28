@@ -21,9 +21,9 @@ jobs:
             coverage: none
             tools: composer:v2
         - name: Install dependencies
-              shell: bash
-              working-directory: ./
-              run: composer update --no-progress --no-suggest --no-interaction --prefer-dist --dev
+          shell: bash
+          working-directory: ./
+          run: composer update --no-progress --no-suggest --no-interaction --prefer-dist --dev
         - name: Reset git changes (if any)
           # needed because of remove local repositories
           run: git reset --hard  
